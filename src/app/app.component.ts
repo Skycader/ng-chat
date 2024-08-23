@@ -18,7 +18,7 @@ interface message {
 })
 export class AppComponent {
   title = 'ng-chat';
-  public socket = io('ws://localhost:3000');
+  public socket = io('ws://82.146.44.237:4000');
   public message: string = '';
   public messages: message[] = [];
   public online: boolean = false;
