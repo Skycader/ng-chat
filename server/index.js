@@ -21,7 +21,7 @@ io.on("connection", (socket) => {
       last100.unshift({ username, message, date: new Date() });
       last100.splice(100);
     } else {
-      io.to(roomId).emit("message", username, message, new Date());
+      io.to(roomId).emit("room-message", username, message, new Date());
     }
   });
 

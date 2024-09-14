@@ -79,6 +79,11 @@ export class AppComponent {
      * Перестаем слушать общий чат
      */
     this.socket.off('message');
+
+    this.socket.on('room-message', (username, message, date) => {
+      this.messages.unshift({ username, message, date });
+      this.messages.splice(200);
+    });
   }
 
   public leaveRoom() {
