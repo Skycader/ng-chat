@@ -18,12 +18,14 @@ interface message {
 })
 export class AppComponent {
   title = 'ng-chat';
-  public socket = io('ws://82.146.44.237:4000');
+  public socket = io('ws://localhost:3000');
   public message: string = '';
   public messages: message[] = [];
   public online: boolean = false;
   public onlineUsers: number = 0;
   public username: string = '';
+  public roomId: string = '';
+  public currentRoomId: string = '';
 
   ngOnInit() {
     this.socket.on('connect', () => {
@@ -31,6 +33,7 @@ export class AppComponent {
     });
     this.socket.on('disconnect', () => {
       this.online = false;
+      this.currentRoomId = '';
     });
 
     this.socket.on('current-online', (online) => {
@@ -45,10 +48,48 @@ export class AppComponent {
     this.socket.on('last100', (last100) => {
       this.messages.unshift(...last100);
     });
+
+    this.socket.on('private-msg', (username, message, date) => {
+      this.messages.unshift({ username, message, date });
+    });
+
+    this.socket.on('room-join', (roomId) => {
+      this.currentRoomId = roomId;
+    });
+
+    this.socket.on('leave-all-rooms', () => {
+      this.currentRoomId = '';
+    });
   }
 
-  public sendMessage() {
-    this.socket.emit('message', this.username, this.message);
+  public sendMessage(room = '') {
+    this.socket.emit('message', this.username, this.message, this.roomId);
     this.message = '';
+  }
+
+  public sendPrivateMessage() {
+    this.socket.emit('private-msg', 'adresat', this.username, this.message);
+    this.message = '';
+  }
+
+  public joinRoom() {
+    this.socket.emit('join-room', this.roomId);
+
+    /**
+     * Перестаем слушать общий чат
+     */
+    this.socket.off('message');
+  }
+
+  public leaveRoom() {
+    this.socket.emit('leave-all-rooms');
+
+    /**
+     * Снова начинаем слушать общий чат
+     */
+    this.socket.on('message', (username, message, date) => {
+      this.messages.unshift({ username, message, date });
+      this.messages.splice(200);
+    });
   }
 }

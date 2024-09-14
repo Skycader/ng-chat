@@ -9,7 +9,7 @@
       />
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-3">
       <input
         class="form-control"
         [(ngModel)]="message"
@@ -43,9 +43,33 @@
         </span>
         <span *ngIf="!online"> Connecting... </span>
         <span *ngIf="online"
-          ><i class="bi bi-reception-4"></i> Online ({{ onlineUsers }})</span
+          ><i class="bi bi-reception-4"></i> Online ({{ onlineUsers }})
+          {{ currentRoomId ? "(" + currentRoomId + ")" : "" }}</span
         >
       </button>
+    </div>
+
+    <div class="col-md-2">
+      <button
+        class="btn btn-primary col-12"
+        (click)="joinRoom()"
+        *ngIf="currentRoomId === ''"
+      >
+        <i class="bi bi-door-closed-fill"></i>
+        Join room
+      </button>
+      <button
+        class="btn btn-primary col-12"
+        (click)="leaveRoom()"
+        *ngIf="currentRoomId !== ''"
+      >
+        <i class="bi bi-door-closed-fill"></i>
+        Leave room
+      </button>
+    </div>
+
+    <div class="col-md-1">
+      <input class="form-control" [(ngModel)]="roomId" placeholder="Room id" />
     </div>
   </div>
 
