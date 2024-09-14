@@ -6,7 +6,6 @@ const online = {};
 const rooms = {};
 const last100 = [];
 io.on("connection", (socket) => {
-  console.log(online);
   online[socket.id] = true;
   io.emit("current-online", Object.keys(online).length);
   socket.emit("last100", last100);
@@ -38,17 +37,13 @@ io.on("connection", (socket) => {
     setRooms(socket, roomId);
     socket.emit("room-join", [...socket.rooms].slice(1));
     if (roomId === "") socket.emit("room-join", "");
-
-    socket.emit("current-online", Object.keys(rooms[roomId]).length);
-    socket.broadcast.emit("current-online", Object.keys(online).length);
   });
 
   socket.on("leave-all-rooms", () => {
     clearRooms(socket);
-    socket.leave([...socket.rooms].slice(1)[0]);
+    socket.leave(getSocketsRoom(socket));
     socket.emit("leave-all-rooms");
     online[socket.id] = true;
-    io.emit("current-online", Object.keys(online).length);
   });
 });
 
