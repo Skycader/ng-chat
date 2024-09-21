@@ -18,7 +18,7 @@ interface message {
 })
 export class AppComponent {
   title = 'ng-chat';
-  public socket = io('ws://localhost:3000');
+  public socket = io('wss://chat.vodri.com');
   public message: string = '';
   public messages: message[] = [];
   public online: boolean = false;
